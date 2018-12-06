@@ -10,7 +10,7 @@
     "react": "16.6.1",
     "react-native": "0.57.7",
     "react-native-geolocation-service": "^2.0.0",
-    "react-native-maps": "^0.22.1"
+    "react-native-maps": "https://github.com/react-native-community/react-native-maps.git"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

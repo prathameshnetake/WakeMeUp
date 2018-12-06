@@ -9,16 +9,13 @@ import {
 import MapView from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 
-const LATITUDE_DELTA = 0.004;
-const LONGITUDE_DELTA = 0.004;
+const ALTITUDE = -48.599998474121094;
 
 export default class App extends Component {
   state = {
     region: {
       latitude: 0,
-      longitude: 0,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA
+      longitude: 0
     },
     destMarker: {
       latitude: 0,
@@ -62,18 +59,23 @@ export default class App extends Component {
 
   gotNewPosition(position) {
     console.log(position.coords);
-    const { latitude, longitude } = position.coords;
-    const newRegion = {
-      latitude,
-      longitude,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    }
+    const { latitude, longitude, altitude} = position.coords;
+    const currentCam = this.map.getCamera();
+    currentCam.then(data => {
+      const camView = {
+        center: {
+          latitude,
+          longitude
+        },
+        heading: data.heading,
+        altitude
+      }
+      this.map.animateCamera(camView, {duration: 500});
+    });
     const newCoordinate = {
       latitude,
       longitude
     }
-    this.map.animateToRegion(newRegion, 500);
     this.liveMarker.animateMarkerToCoordinate(newCoordinate, 500);
   }
 
@@ -89,7 +91,6 @@ export default class App extends Component {
         console.log(data);
         Geolocation.watchPosition(
           (position) => {
-            console.log("got new position");
             _this.gotNewPosition(position);
           },
           (error) => {
@@ -99,7 +100,7 @@ export default class App extends Component {
           { enableHighAccuracy: true,
             timeout: 15000,
             maximumAge: 0,
-            distanceFilter: 50,
+            distanceFilter: 10,
             fastestInterval: 500,
             interval: 1000,
             showLocationDialog: true
@@ -115,11 +116,22 @@ export default class App extends Component {
       latitude: this.state.region.latitude,
       longitude: this.state.region.longitude,
     }
+    const camView = {
+      center: {
+          latitude: this.state.region.latitude,
+          longitude: this.state.region.longitude,
+      },
+      pitch: 0,
+      heading: 0,
+      zoom: 15,
+      altitude: ALTITUDE
+    }
     return (
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          region={this.state.region}
+          // region={this.state.region}
+          camera={camView}
           ref={map => (this.map = map)}
           onLongPress={this.handleLongPress}
           onMapReady={this.handleMapReady.bind(this)}
