@@ -7,7 +7,7 @@ buildscript {
         minSdkVersion = 16
         buildToolsVersion   = "26.0.2"
         supportLibVersion   = "26.1.0"
-        googlePlayServicesVersion = "11.8.0"
+        googlePlayServicesVersion = "12.0.1"
         androidMapsUtilsVersion = "0.5+"
     }
     repositories {
